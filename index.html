@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pandemonium Matrix Gematria Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            font-family: 'Roboto Mono';
+            color: #00ff00;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .terminal {
+            background-color: #000;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background-color: #001100;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #00ff00;
+        }
+
+        .terminal-title {
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .terminal-buttons {
+            display: flex;
+        }
+
+        .button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 8px;
+            background-color: #00ff00;
+            opacity: 0.7;
+        }
+
+        .terminal-body {
+            padding: 20px;
+            min-height: 500px;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .prompt {
+            margin-bottom: 10px;
+            font-size: 1.0rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background-color: #001100;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px;
+            font-family: 'Roboto Mono';
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        button {
+            background-color: #001100;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 8px 15px;
+            font-family: 'Roboto Mono';
+            font-size: 1.0rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        .output-section {
+            border-top: 1px dashed #00ff00;
+            padding-top: 20px;
+        }
+
+        #output-result {
+            white-space: pre-wrap;
+            font-size: 1.0rem;
+            line-height: 1.4;
+        }
+
+        .entity-name {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .mesh {
+            color: #00ffff;
+        }
+
+        .net-span {
+            color: #00ffff;
+        }
+
+        .gematria-value {
+            color: #ff00ff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #loading {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .calculation-step {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: #aaffaa;
+        }
+
+        .entity-description {
+            color: #88ff88;
+            font-style: italic;
+            margin-left: 20px;
+        }
+        
+        .flipped {
+            color: #ff9900;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-title">PANDEMONIUM MATRIX GEMATRIA CALCULATOR</div>
+                <div class="terminal-buttons">
+                    <span class="button"></span>
+                    <span class="button"></span>
+                    <span class="button"></span>
+                </div>
+            </div>
+            <div class="terminal-body">
+                <div class="input-section">
+                    <div class="prompt">> ENTER WORD OR PHRASE:</div>
+                    <input type="text" id="input-text" autocomplete="off">
+                    <button id="calculate-btn">CALCULATE</button>
+                </div>
+                <div class="output-section">
+                    <div id="loading" class="hidden">CALCULATING...</div>
+                    <div id="output-result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Pandemonium Matrix data
+    const pandemoniumMatrix = {
+        "1::0": { mesh: "00", name: "LURGO (LEGBA, TERMINAL/INITIATOR)", description: "Amphidemon of Openings (The Door of Doors)", door: "1st Door (The Pod) [Mercury]" },
+        "2::0": { mesh: "01", name: "DUODDOD (DUPLICITOUS REDOUBLER)", description: "Amphidemon of Abstract Addiction", door: "2nd Door (The Crypt) [Venus]" },
+        "2::1": { mesh: "02", name: "DOOGU (THE BLOB)", description: "Cyclic Chronodemon of Splitting-Waters" },
+        "3::0": { mesh: "03", name: "IXIX (YIX)", description: "Chaotic Xenodemon of Cosmic Indifference", door: "3rd Door (The Swirl) [Earth]" },
+        "3::1": { mesh: "04", name: "IXIGOOL (DJINN OF THE MAGI)", description: "Amphidemon of Tridentity (Sphinx-time)" },
+        "3::2": { mesh: "05", name: "IXIDOD (KING SID)", description: "Amphidemon of Escape-velocity" },
+        "4::0": { mesh: "06", name: "KRAKO (KRU, KARAK-OA)", description: "Amphidemon of Burning-Hail", door: "4th Door (Delta) [Mars]" },
+        "4::1": { mesh: "07", name: "SUKUGOOL (OLD SKUG)", description: "Cyclic Chronodemon of deluge and implosion" },
+        "4::2": { mesh: "08", name: "SKOODU (LI'L SCUD)", description: "Cyclic Chronodemon of Switch-Crazes" },
+        "4::3": { mesh: "09", name: "SKARKIX (SHARKY, SCAR-HEAD)", description: "Amphidemon of anti-evolution (eddies of the Delta)" },
+        "5::0": { mesh: "10", name: "TOKHATTO (OLD TOKER, TOP CAT)", description: "Amphidemon of Talismania", door: "5th Door (Hyperborea) [Jupiter]" },
+        "5::1": { mesh: "11", name: "TUKKAMU", description: "Cyclic Chronodemon of Pathogenesis" },
+        "5::2": { mesh: "12", name: "KUTTADID (KITTY)", description: "Cyclic Chronodemon of Precarious States" },
+        "5::3": { mesh: "13", name: "TIKKITIX (TICKLER)", description: "Amphidemon of Vortical Delirium" },
+        "5::4": { mesh: "14", name: "KATAK", description: "Syzygetic Chronodemon of Cataclysmic Convergence" },
+        "6::0": { mesh: "15", name: "TCHU (TCHANUL)", description: "Chaotic Xenodemon of Ultimate Outsideness (and unnamable things)", door: "6th Door (Undu) [Saturn]" },
+        "6::1": { mesh: "16", name: "DJUNGO", description: "Amphidemon of Subtle Involvements (and intricate puzzles)" },
+        "6::2": { mesh: "17", name: "DJUDDHA (JUDD DREAD)", description: "Amphidemon of Artificial Turbulence (complex-dynamics simulations)" },
+        "6::3": { mesh: "18", name: "DJYNXX (CHING, THE JINN)", description: "Syzygetic Xenodemon of Time-Lapse" },
+        "6::4": { mesh: "19", name: "TCHAKKI (CHUCKLES)", description: "Amphidemon of Combustion" },
+        "6::5": { mesh: "20", name: "TCHATTUK (ONE EYED JACK, DJATKA)", description: "Amphidemon of Unscreened Matrix" },
+        "7::0": { mesh: "21", name: "PUPPO (THE PUP)", description: "Amphidemon of Larval Regression", door: "7th Door (Akasha) [Uranus]" },
+        "7::1": { mesh: "22", name: "BUBBAMU (BUBS)", description: "Cyclic Chronodemon of Relapse" },
+        "7::2": { mesh: "23", name: "ODDUBB (ODBA)", description: "Syzygetic Chronodemon of Swamp-Labyrinths (and blind-doubles)" },
+        "7::3": { mesh: "24", name: "PABBAKIS (PABZIX)", description: "Amphidemon of Interference (and fakery)" },
+        "7::4": { mesh: "25", name: "ABABBATOK (ABRACADABRA)", description: "Cyclic Chronodemon of Suspended Decay" },
+        "7::5": { mesh: "26", name: "PAPATAKOO (PATAKU)", description: "Cyclic Chronodemon of Calendric Time" },
+        "7::6": { mesh: "27", name: "BOBOBJA (BUBBLES, BEELZEBUB)", description: "Amphidemon of Teeming Pestilence" },
+        "8::0": { mesh: "28", name: "MINOMMO", description: "Amphidemon of Submergence", door: "8th Door (Limbo) [Neptune]" },
+        "8::1": { mesh: "29", name: "MUR MUR (MURRUMUR, MU(MU))", description: "Syzygetic Chronodemon of the Deep Ones" },
+        "8::2": { mesh: "30", name: "NAMMAMAD", description: "Cyclic Chronodemon of Subterranean Commerce" },
+        "8::3": { mesh: "31", name: "MUMMUMIX (MIX-UP)", description: "Amphidemon of Insidious Fog (Nyarlathotep)" },
+        "8::4": { mesh: "32", name: "NUMKO (OLD NUK)", description: "Cyclic Chronodemon of Autochthony" },
+        "8::5": { mesh: "33", name: "MUNTUK (MANTA, MANITOU)", description: "Cyclic Chronodemon of Arid Seabeds" },
+        "8::6": { mesh: "34", name: "MOMMOLJO (MAMA JO)", description: "Amphidemon of Xenogenesis" },
+        "8::7": { mesh: "35", name: "MOMBBO", description: "Cyclic Chronodemon of Hybridity" },
+        "9::0": { mesh: "36", name: "UTTUNUL", description: "Syzygetic Xenodemon of Atonality", door: "9th Door (Cthelll) [Pluto]" },
+        "9::1": { mesh: "37", name: "TUTAGOOL (YETTUK)", description: "Amphidemon of Punctuality" },
+        "9::2": { mesh: "38", name: "UNNUNDDO (THE FALSE NUN)", description: "Amphidemon of Endless Uncasing (onion-skin horror)" },
+        "9::3": { mesh: "39", name: "UNUNUTTIX (TICK-TOCK)", description: "Chaotic Xenodemon of Absolute Coincidence" },
+        "9::4": { mesh: "40", name: "UNUNAK (NUKE)", description: "Amphidemon of Convulsions" },
+        "9::5": { mesh: "41", name: "TUKUTU (KILLER-KATE)", description: "Amphidemon of Death-Strokes" },
+        "9::6": { mesh: "42", name: "UNNUTCHI (OUTCH, T'AI CHI)", description: "Chaotic Xenodemon of Coiling Outsideness" },
+        "9::7": { mesh: "43", name: "NUTTUBAB (NUT-CRACKER)", description: "Amphidemon of Metaloid Unlife" },
+        "9::8": { mesh: "44", name: "UMMNU (OM, OMNI, AMEN, OMEN)", description: "Amphidemon of Earth-Screams" }
+    };
+
+    // AQ Gematria cipher: A=10, B=11, C=12...Z=35
+    function getAQValue(char) {
+        return /[A-Z]/.test(char) ? char.charCodeAt(0) - 55 : 0; // A is 65 in ASCII, 65-55=10
+    }
+
+    // Calculate gematria value for a word
+    function calculateGematria(word) {
+        return word.split('').reduce((sum, char) => sum + getAQValue(char), 0);
+    }
+
+    // Reduce a number to a single digit
+    function reduceToSingleDigit(num) {
+        while (num > 9) {
+            num = num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+        }
+        return num;
+    }
+
+    // Find entity in matrix, with flipping if needed
+    function findEntity(netSpan) {
+        const entity = pandemoniumMatrix[netSpan];
+        if (entity) {
+            return { entity, flipped: false };
+        }
+
+        const flippedNetSpan = netSpan.split("::").reverse().join("::");
+        return pandemoniumMatrix[flippedNetSpan] ? { entity: pandemoniumMatrix[flippedNetSpan], flipped: true, flippedSpan: flippedNetSpan } : { entity: null, flipped: false };
+    }
+
+    // Calculate Net Spans for a gematria value
+    function calculateNetSpans(gematriaValue) {
+        const digits = gematriaValue.toString().split('').map(Number);
+        let netSpans = [];
+
+        // Only include Method 1 for single-digit numbers 1-9
+        if (gematriaValue >= 1 && gematriaValue <= 9) {
+            let sum1 = reduceToSingleDigit(digits.reduce((a, b) => a + b, 0));
+            let netSpan1 = `${sum1}::0`;
+            let doorDescription = pandemoniumMatrix[netSpan1]?.door || `Sum of digits: ${digits.join('+')} = ${sum1}`;
+            netSpans.push({ netSpan: netSpan1, calculation: `Digital reduction: ${digits.join('+')} = ${doorDescription}` });
+        }
+
+        // For multi-digit numbers, include Methods 1, 2, and 3
+        if (digits.length > 1) {
+            // Method 1: Sum of all digits (reduced if necessary)
+            let sum1 = reduceToSingleDigit(digits.reduce((a, b) => a + b, 0));
+            let netSpan1 = `${sum1}::0`;
+            let doorDescription = pandemoniumMatrix[netSpan1]?.door || `Sum of digits: ${digits.join('+')} = ${sum1}`;
+            netSpans.push({ netSpan: netSpan1, calculation: `Digital reduction: ${digits.join('+')} = ${doorDescription}` });
+
+            const firstGroup = digits.slice(0, -1).reduce((a, b) => a + b, 0);
+            const lastDigit = digits[digits.length - 1];
+            let reducedFirstGroup = reduceToSingleDigit(firstGroup);
+            let netSpan2 = `${reducedFirstGroup}::${lastDigit}`;
+            netSpan2 = handleEqualDigits(netSpan2);
+            if (parseInt(netSpan2.split("::")[0]) > parseInt(netSpan2.split("::")[1])) {
+                netSpan2 = netSpan2.split("::").reverse().join("::"); // Flip the digits
+            }
+
+            // Method 3: First digit + (sum of remaining digits)
+            const firstDigit = digits[0];
+            const remainingSum = reduceToSingleDigit(digits.slice(1).reduce((a, b) => a + b, 0));
+            let netSpan3 = `${firstDigit}::${remainingSum}`;
+            netSpan3 = handleEqualDigits(netSpan3);
+
+            netSpans.push(
+                { netSpan: netSpan2, calculation: `First group + last digit: (${digits.slice(0, -1).join('+')})+${lastDigit} = ${firstGroup}+${lastDigit}` },
+                { netSpan: netSpan3, calculation: `First digit + remaining sum: ${firstDigit}+(${digits.slice(1).join('+')}) = ${firstDigit}+${remainingSum}` }
+            );
+        }
+
+        // Method 4: Remainder of gematria value divided by 45 (always added last)
+        const remainder = gematriaValue % 45;
+        let netSpan4 = getNetSpanFromRemainder(remainder);
+        netSpans.push({ netSpan: netSpan4, calculation: `Remainder of ${gematriaValue} divided by 45: ${gematriaValue} % 45 = mesh-#${remainder.toString().padStart(2, '0')}` });
+
+        return netSpans;
+    }
+
+    // Get net span from remainder
+    function getNetSpanFromRemainder(remainder) {
+        return Object.keys(pandemoniumMatrix)[remainder]; // Adjust for zero-based index
+    }
+
+    // Handle equal digits in net span
+    function handleEqualDigits(netSpan) {
+        const [firstDigit, secondDigit] = netSpan.split("::").map(Number);
+        if (firstDigit === secondDigit) {
+            const sum = firstDigit + secondDigit;
+            return `${reduceToSingleDigit(sum)}::0`; // Return the reduced sum with ::0
+        }
+        return netSpan; // Return unchanged if not equal
+    }
+
+    // Format the output
+    function formatOutput(word, gematriaValue, netSpans) {
+        let output = `WORD: <span class="gematria-value">${word}</span>\n`;
+        output += `AQ GEMATRIA: <span class="gematria-value">${gematriaValue}</span>\n\n`;
+        output += `NET SPAN ANALYSIS:\n\n`;
+
+        netSpans.forEach((item, index) => {
+            output += `${index + 1}. <span class="calculation-step">${item.calculation}</span>\n`;
+            const result = findEntity(item.netSpan);
+            if (result.entity) {
+                output += `   (mesh-<span class="net-span">#${result.entity.mesh}</span>) - Net Span <span class="net-span">${result.flipped ? result.flippedSpan : item.netSpan}</span>`;
+                output += ` - <span class="entity-name">${result.entity.name}</span>\n`;
+                output += `   <span class="entity-description">"${result.entity.description}"</span>\n`;
+            } else {
+                output += `   <span class="entity-name">Unknown Entity</span>\n`;
+            }
+            output += '\n';
+        });
+
+        return output;
+    }
+
+    // Handle calculation
+    function performCalculation() {
+        const text = document.getElementById('input-text').value.trim().toUpperCase();
+        const outputResult = document.getElementById('output-result');
+        const loadingIndicator = document.getElementById('loading');
+
+        if (!text) {
+            outputResult.innerHTML = 'ERROR: PLEASE ENTER A WORD OR PHRASE';
+            return;
+        }
+
+        // Show loading indicator
+        loadingIndicator.classList.remove('hidden');
+        outputResult.innerHTML = '';
+
+        // Simulate processing delay for cyberpunk effect
+        setTimeout(() => {
+            // Filter out non-alphanumeric characters
+            const filteredText = text.replace(/[^0-9A-Z]/g, '');
+            const gematriaValue = calculateGematria(filteredText);
+
+            // Add numeric values to the gematria value
+            const numericValue = Array.from(filteredText).reduce((sum, char) => {
+                return !isNaN(char) ? sum + parseInt(char, 10) : sum;
+            }, 0);
+
+            const totalValue = gematriaValue + numericValue;
+
+            // Calculate Net Spans
+            const netSpans = calculateNetSpans(totalValue);
+
+            // Format and display output
+            outputResult.innerHTML = formatOutput(filteredText, totalValue, netSpans);
+
+            // Hide loading indicator
+            loadingIndicator.classList.add('hidden');
+        }, 800);
+    }
+
+    // Set up event listeners when the page loads
+    window.onload = function() {
+        const calculateBtn = document.getElementById('calculate-btn');
+        const inputText = document.getElementById('input-text');
+
+        calculateBtn.addEventListener('click', performCalculation);
+        inputText.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performCalculation();
+            }
+        });
+
+        // Focus input on load
+        inputText.focus();
+    };
+</script>
+</body>
+</html>
